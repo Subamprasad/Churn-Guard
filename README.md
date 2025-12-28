@@ -2,7 +2,7 @@
 
 **Churn-Guard** is a production-grade MLOps project designed to predict customer churn risk using ZenML pipelines and serve predictions via a modern, glassmorphism-styled Web UI.
 
-![Churn-Guard UI](https://i.imgur.com/example_screenshot.png) <!-- Replace with actual screenshot if available -->
+
 
 ## 🚀 Key Features
 
@@ -14,9 +14,16 @@ Built using **ZenML** to orchestrate reproducible workflows:
 - **Evaluation Step**: Focuses on **Recall** to minimize missed churners.
 
 ### 2. **Advanced Design Patterns**
-The codebase isn't just a script; it follows strict software engineering principles:
-- **Strategy Pattern**: For Data Cleaning (`src/data_cleaning.py`) and Evaluation (`src/evaluation.py`).
-- **Factory Pattern**: For abstracted Model creation (`src/model_dev.py`).
+This project implements robust software engineering patterns to ensure scalability and maintainability:
+
+#### **A. Strategy Pattern**
+Used to encapsulate algorithms for specific tasks, allowing them to be interchangeable.
+- **Data Cleaning (`src/data_cleaning.py`)**: Defines a `DataStrategy` interface with concrete implementations for `DataPreProcessStrategy` (preprocessing) and `DataDivideStrategy` (splitting data). This allows easily switching between entirely different data handling logic without changing the client code.
+- **Model Evaluation (`src/evaluation.py`)**: `Evaluation` abstract class allows different scoring strategies (`MSE`, `Recall`, `F1`).
+
+#### **B. Factory Pattern**
+Used to create objects without specifying the exact class of object that will be created.
+- **Model Development (`src/model_dev.py`)**: The `ModelFactory` creates instances of model classes (`RandomForestModel`, `XGBoostModel`, `LightGBMModel`) based on a simple string input. This abstracts the complexity of model instantiation from the training step.
 
 ### 3. **Premium Web Interface**
 A high-aesthetic Flask application (`app.py`) serves the models:
@@ -89,4 +96,4 @@ This project distinguishes itself by focusing on the **Business Problem** first:
 - **Metric**: prioritized **Recall** (Cost of False Negative > Cost of False Positive).
 - **Guardrails**: Integrated monitoring for feature drift.
 
-For a detailed explanation of the thought process, see `subam.md`.
+
