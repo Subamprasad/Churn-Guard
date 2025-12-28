@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Churn-Guard AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Churn-Guard AI</h1>
+            <p>Predict customer retention with MLOps precision.</p>
+        </header>
+
+        <div id="form-card" class="glass-card">
+            <form id="prediction-form">
+                <div class="form-group">
+                    <label for="age">Customer Age</label>
+                    <input type="number" id="age" name="age" value="35" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="usage_minutes">Monthly Usage (Minutes)</label>
+                    <input type="number" id="usage_minutes" name="usage_minutes" value="300" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="contract_length">Contract Length (Months)</label>
+                    <select id="contract_length" name="contract_length">
+                        <option value="1">1 Month</option>
+                        <option value="12" selected>12 Months</option>
+                        <option value="24">24 Months</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="support_calls">Support Calls (Last 30 Days)</label>
+                    <input type="number" id="support_calls" name="support_calls" value="1" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="payment_delay">Payment Delay (Days)</label>
+                    <input type="number" id="payment_delay" name="payment_delay" value="0" required>
+                </div>
+
+                <button type="submit" class="btn-primary">Predict Churn Risk</button>
+            </form>
+        </div>
+
+        <div id="result-card" class="glass-card hidden">
+            <h2>Prediction Result</h2>
+            <div class="result-content">
+                <span id="prediction-text" class="status-badge">Processing...</span>
+                <p>Probability: <span id="probability-value">0.00</span></p>
+            </div>
+            <button id="reset-btn" class="btn-secondary">Check Another</button>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('prediction-form');
+        const formCard = document.getElementById('form-card');
+        const resultCard = document.getElementById('result-card');
+        const predictionText = document.getElementById('prediction-text');
+        const probabilityValue = document.getElementById('probability-value');
+        const resetBtn = document.getElementById('reset-btn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                } else {
+                    predictionText.textContent = data.prediction;
+                    probabilityValue.textContent = data.probability;
+
+                    if (data.raw_pred === 1) {
+                        predictionText.className = 'status-badge danger';
+                    } else {
+                        predictionText.className = 'status-badge success';
+                    }
+
+                    formCard.classList.add('hidden');
+                    resultCard.classList.remove('hidden');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('An error occurred during prediction.');
+            }
+        });
+
+        resetBtn.addEventListener('click', () => {
+            resultCard.classList.add('hidden');
+            formCard.classList.remove('hidden');
+        });
+    </script>
+</body>
+
+</html>

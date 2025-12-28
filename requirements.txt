@@ -1,0 +1,7 @@
+zenml[server]
+pandas
+numpy
+scikit-learn
+xgboost
+lightgbm
+flask
